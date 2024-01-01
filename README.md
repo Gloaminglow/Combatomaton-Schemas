@@ -17,6 +17,8 @@ Data
     Traits
     Wapons
 ```
+If you have any questions or you need help with anything we're happy to help on the discord at https://discord.gg/tzbJNCJenk.
+
 
 ## Maps
 Details for creating custom maps are in map-format.md. You can also look at the in-game maps in `Data/Base/Maps` in the game folder for examples.

@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+   <xs:include schemaLocation="types.xsd" />
+   <!-- Defines the XML types for references to other assets -->
+
+   <!-- definition for character reference. can be used by
+   levels, summoning, and possibly saving playerprefs -->
+   <xs:complexType name="characterReference">
+      <xs:all>
+         <xs:element name="name" type="xs:string" minOccurs="0"/> <!-- defaults to empty string -->
+         <xs:element name="model" type="characterModel"/>
+         <!-- useful only for player characters. defaults to 0 -->
+         <xs:element name="trait-balance" type="xs:float" minOccurs="0"/>
+         <xs:element name="equipment">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="weapon" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+                  <xs:element name="trait" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                  <xs:element name="ability" type="xs:string" minOccurs="0"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:all>
+   </xs:complexType>
+
+   <xs:complexType name="characterReferenceFFA">
+      <xs:all>
+         <xs:element name="name" type="xs:string" minOccurs="0"/> <!-- defaults to empty string -->
+         <xs:element name="color" type="xs:integer" minOccurs="0"/> <!-- reorder to put color defines first -->
+         <xs:element name="model" type="characterModel"/>
+         <!-- useful only for player characters. defaults to 0 -->
+         <xs:element name="trait-balance" type="xs:float" minOccurs="0"/>
+         <xs:element name="equipment">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="weapon" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+                  <xs:element name="trait" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                  <xs:element name="ability" type="xs:string" minOccurs="0"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:all>
+   </xs:complexType>
+
+   <!-- definition for character reference model -->
+   <xs:complexType name="characterModel" >
+      <xs:choice>
+         <xs:element name="parts">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="head" type="xs:string"/>
+                  <xs:element name="arms" type="xs:string"/>
+                  <xs:element name="body" type="xs:string"/>
+                  <xs:element name="legs" type="xs:string"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="rotate">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="rotate" type="model" minOccurs="0"/>
+                  <xs:element name="station" type="model" minOccurs="0"/>
+                  <!-- both default to 0 -->
+                  <xs:element name="rotate-depth" type="xs:integer" minOccurs="0"/>
+                  <xs:element name="station-depth" type="xs:integer" minOccurs="0"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:choice>
+   </xs:complexType>
+   
+   <!-- Simple stub definition for a weapon reference.
+   Will be updated (and possibly changed) when the schema definition for
+   weapons is created. -->
+   <xs:complexType name="weaponReference">
+      <xs:attribute name="src" use="optional" />
+   </xs:complexType>
+
+   <!-- Simple stub definition for a projectile reference.
+   Will be updated (and possibly changed) when the schema definition for
+   projectiles is created. -->
+   <xs:complexType name="projectileReference">
+      <xs:attribute name="src" use="optional" />
+   </xs:complexType>
+   
+   <!-- Simple stub definition for an image reference.
+   Will be updated (and possibly changed) when other schema definitions
+   are created and updated. -->
+   <xs:complexType name="imageReference">
+      <xs:all>
+         <xs:element name="path" type="xs:string" />
+         <xs:element name="scale" type="xs:float" />
+         <xs:element name="focus-point" type="vector2" minOccurs="0" /> <!-- default <0.5, 0.5> -->
+      </xs:all>
+   </xs:complexType>
+
+   <xs:complexType name="model">
+      <xs:choice>
+         <xs:sequence>
+            <xs:element name="icon" type="xs:string" />
+            <xs:element name="scale" type="xs:float" />
+            <xs:element name="pivot" type="vector2" />
+         </xs:sequence>
+         <xs:element name="reference" type="xs:string" />
+      </xs:choice>
+   </xs:complexType>
+   
+   <!-- Simple stub definition for a sound reference. -->
+   <xs:simpleType name="soundReference">
+      <xs:restriction base="xs:string">
+         <xs:pattern value=".*"></xs:pattern>
+      </xs:restriction>
+   </xs:simpleType>
+   
+   <!-- Temporary defninition for projectile effects. -->
+   <xs:simpleType name="projectileEffectsReference">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="basic" />
+         <xs:enumeration value="beam" />
+         <xs:enumeration value="big-bolt" />
+         <xs:enumeration value="bolt" />
+         <xs:enumeration value="dart" />
+         <xs:enumeration value="explode" />
+         <xs:enumeration value="fire" />
+         <xs:enumeration value="firefly" />
+         <xs:enumeration value="grenade" />
+         <xs:enumeration value="rocket" />
+         <xs:enumeration value="sword" />
+         <xs:enumeration value="web" />
+         <xs:enumeration value="lightning" />
+         <xs:enumeration value="none" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- Color for projectiles and weapon FX -->
+   <xs:simpleType name="energyColor">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="black" />
+         <xs:enumeration value="blue" />
+         <xs:enumeration value="cyan" />
+         <xs:enumeration value="flaw" />
+         <xs:enumeration value="green" />
+         <xs:enumeration value="orange" />
+         <xs:enumeration value="purple" />
+         <xs:enumeration value="red" />
+         <xs:enumeration value="none" />
+      </xs:restriction>
+   </xs:simpleType>
+   
+</xs:schema>

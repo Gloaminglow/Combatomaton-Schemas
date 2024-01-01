@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:include schemaLocation="types.xsd" />
+   <xs:include schemaLocation="reference.xsd" />
+
+   <xs:element name="armor">
+      <xs:complexType>
+    <xs:choice>
+       <xs:element name="head">
+          <xs:complexType>
+             <xs:sequence>
+                <xs:element name="model" type="model"/>
+                <xs:element name="unlock" type="xs:string" minOccurs="0" />
+             </xs:sequence>
+          </xs:complexType>
+       </xs:element>
+       <xs:element name="arms">
+          <xs:complexType>
+             <xs:sequence>
+                <xs:element name="front-upper" type="model" minOccurs="0" />
+                <xs:element name="front-elbow" type="model" minOccurs="0" />
+                <xs:element name="front-lower" type="model" minOccurs="0" />
+                <xs:element name="back-upper" type="model" minOccurs="0" />
+                <xs:element name="back-elbow" type="model" minOccurs="0" />
+                <xs:element name="back-lower" type="model" minOccurs="0" />
+                <xs:element name="unlock" type="xs:string" minOccurs="0" />
+             </xs:sequence>
+          </xs:complexType>
+       </xs:element>
+       <xs:element name="body">
+          <xs:complexType>
+             <xs:sequence>
+                <xs:element name="model" type="model"/>
+                <xs:element name="unlock" type="xs:string" minOccurs="0" />
+             </xs:sequence>
+          </xs:complexType>
+       </xs:element>
+       <xs:element name="legs">
+          <xs:complexType>
+             <xs:sequence>
+                <!-- TODO: somethign for the legs themselves -->
+                <xs:element name="unlock" type="xs:string" minOccurs="0" />
+             </xs:sequence>
+          </xs:complexType>
+       </xs:element>
+    </xs:choice>
+   </xs:complexType>
+   </xs:element>
+   
+</xs:schema>

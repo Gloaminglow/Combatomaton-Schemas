@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+    elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+   <xs:include schemaLocation="types.xsd" />
+   <xs:include schemaLocation="reference.xsd" />
+   
+   <!-- Weapon represented in XML. -->
+   <xs:element name="weapon">
+      <xs:complexType>
+         <xs:all>
+            <xs:element name="type">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:enumeration value="primary" />
+                     <xs:enumeration value="secondary" />
+                     <xs:enumeration value="special" />
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element name="fire-delay" type="xs:nonNegativeInteger" />
+            <xs:element name="reload-delay" type="xs:nonNegativeInteger" />
+            <xs:element name="burst-size" type="xs:positiveInteger" default="1" minOccurs="0" />
+            <xs:element name="magazine-size" type="xs:positiveInteger" />
+            <xs:element name="reload-amount" type="xs:positiveInteger" minOccurs="0" /> <!-- Default: magazine-size -->
+            <xs:element name="max-ammo" type="xs:float" />
+            <xs:element name="ammo-mult" type="xs:float" minOccurs="0" /> <!-- Default: magazine-size -->
+            <xs:element name="accuracy" type="xs:float" minOccurs="0" /> <!-- default 0 -->
+            <xs:element name="automatic" type="xs:boolean" minOccurs="0" /> <!-- Default: false-->
+            <xs:element name="reload-interrupt" type="xs:boolean" minOccurs="0" /> <!-- Default: false-->
+            <xs:element name="player-bound" type="xs:boolean" minOccurs="0" /> <!-- Default: false-->
+            <xs:element name="strategic" type="xs:boolean" minOccurs="0" /> <!-- Default: false-->
+            <xs:element name="projectile" type="weaponProjectile" />
+            <xs:element name="secondary-projectile" type="weaponProjectile" minOccurs="0" />
+            <xs:element name="effects" type="weaponFX" />
+            <xs:element name="unlock" type="xs:string" minOccurs="0" />
+         </xs:all>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:complexType name="weaponFX">
+      <xs:all>
+         <xs:element name="name" type="xs:string" />
+         <xs:element name="description" type="xs:string" />
+         <xs:element name="model" type="model" minOccurs="0"/>
+         <xs:element name="icon" type="xs:string" minOccurs="0" /> <!-- Default: sprite -->
+         <xs:element name="front-hand" type="vector2" />
+         <xs:element name="back-hand" type="vector2" />
+         <xs:element name="position" type="vector2" />
+         <!-- default: nothing -->
+         <xs:element name="shoot-image" minOccurs="0" >
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:enumeration value="basic" />
+                  <xs:enumeration value="big" />
+                  <xs:enumeration value="none" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="shoot-color" type="energyColor" minOccurs="0"  />
+         <xs:element name="sounds">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="shoot" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                  <xs:element name="after" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                  <xs:element name="empty" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                  <xs:element name="reload" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                  <xs:element name="secondary" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <!-- default 0 -->
+         <xs:element name="shoot-angle" type="xs:float" minOccurs="0" />
+         <!-- default <0, 0> -->
+         <xs:element name="shoot-front-hand" type="vector2" minOccurs="0" />
+         <!-- default <0, 0> -->
+         <xs:element name="shoot-back-hand" type="vector2" minOccurs="0" />
+         <!-- default 0.5 -->
+         <xs:element name="shoot-peak" minOccurs="0" type="fraction" />
+         <!-- default: true -->
+         <xs:element name="arms-reload" type="xs:boolean" minOccurs="0" />
+      </xs:all>
+   </xs:complexType>
+
+   <!-- Projectile -->
+   <xs:complexType name="weaponProjectile">
+      <xs:all>
+         <xs:element name="projectile" type="projectileType" />
+         <xs:element name="effects" type="projectileEffectsReference" minOccurs="0" />
+         <xs:element name="color" type="energyColor" minOccurs="0"  />
+         <!-- -->
+         <xs:element name="speed" type="xs:float" minOccurs="0" />
+         <!-- default 0 -->
+         <xs:element name="damage" type="xs:float" />
+         <xs:element name="range" type="xs:float" />
+         <xs:element name="crit" type="fraction" minOccurs="0" />
+         <!-- default 0 -->
+      </xs:all>
+   </xs:complexType>
+   
+</xs:schema>

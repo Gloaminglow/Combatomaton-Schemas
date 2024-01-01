@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+    elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+   <xs:include schemaLocation="types.xsd" />
+   <xs:include schemaLocation="reference.xsd" />
+
+   <xs:element name="level">
+      <xs:complexType>
+         <xs:all>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="description" type="xs:string" />
+            <xs:element name="splash" minOccurs="0" > <!-- defaults to map, which is 0 in struct -->
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:enumeration value="map" />
+                     <xs:enumeration value="level" />
+                     <xs:enumeration value="both" />
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element name="unlock" type="xs:string" minOccurs="0" /> <!-- corresponds to "locked" in the struct! NOT "unlock"! -->
+            <xs:element name="tutorial" type="xs:boolean" minOccurs="0" /> <!-- Default: false-->
+            <xs:element name="team-setup" type="teamSetup"/>
+            <xs:element name="match" type="match"/>
+         </xs:all>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:complexType name="match">
+      <xs:all>
+         <xs:element name="map" type="xs:string" />
+         <xs:element name="type">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:enumeration value="death-match" />
+                  <xs:enumeration value="control" />
+                  <xs:enumeration value="capture-the-flag" />
+                  <xs:enumeration value="king-of-the-hill" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="special-value" type="xs:positiveInteger" minOccurs="0" /> <!-- Default: no special value -->
+         <xs:element name="score" type="xs:positiveInteger" minOccurs="0" /> <!-- Default: no score -->
+         <xs:element name="eliminations" type="xs:positiveInteger" minOccurs="0" /> <!-- Default: no elims -->
+         <xs:element name="elimination-style" minOccurs="0" > <!-- defaults to normal -->
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:enumeration value="normal" />
+                  <xs:enumeration value="pool" />
+                  <xs:enumeration value="blob" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="time" type="xs:positiveInteger" minOccurs="0" /> <!-- Default: no time -->
+         <xs:element name="target-teamsize" type="xs:positiveInteger" minOccurs="0" /> <!-- teams will be fill/culled to this size. Defaults to 1 -->
+         <xs:element name="extra-teams" type="xs:positiveInteger" minOccurs="0" /> <!-- Default: no extra teams -->
+         <xs:element name="music" minOccurs="0"> <!-- Default: empty -->
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="track" type="xs:string" maxOccurs="unbounded" />
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:all>
+   </xs:complexType>
+
+   <!-- this should become an array of team references -->
+   <xs:complexType name="teamSetup"> 
+      <xs:choice>
+         <xs:element name="teams">
+            <xs:complexType>
+               <xs:sequence>
+                  <!-- player should be inserted into the player-team with reference -->
+                  <xs:element name="player-team" type="playerTeam" minOccurs="0" maxOccurs="1" />
+                  <xs:element name="team" type="team" minOccurs="1" maxOccurs="15" />
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="free-for-all">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="backup-color" type="xs:integer" minOccurs="0" /> <!-- Default: -1, ges to first index in levels ffaColors -->
+                  <xs:element name="player" type="characterReferenceFFA" minOccurs="0" maxOccurs="unbounded" />
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:choice>
+   </xs:complexType>
+
+   <!-- this becomes a single team reference -->
+   <xs:complexType name="team">
+    <xs:all>
+       <xs:element name="name" type="xs:string" minOccurs="0"/> <!-- Default: "" -->
+       <xs:element name="color" type="xs:integer" />
+       <xs:element name="backup-color" type="xs:integer" minOccurs="0" /> <!-- Default: color -->
+       <xs:element name="fill" type="xs:boolean" minOccurs="0" /> <!-- Default: true-->
+       <xs:element name="cull" type="xs:boolean" minOccurs="0" /> <!-- Default: true-->
+       <xs:element name="players" minOccurs="0">
+          <xs:complexType>
+             <xs:sequence>
+                <xs:element name="player" type="characterReference" minOccurs="1" maxOccurs="unbounded" />
+             </xs:sequence>
+          </xs:complexType>
+       </xs:element>
+    </xs:all>
+   </xs:complexType>
+   
+   <!-- this becomes a single team reference, add an empty player reference in the first player index -->
+   <xs:complexType name="playerTeam">
+      <xs:all>
+         <xs:element name="name" type="xs:string" minOccurs="0"/> <!-- Default: "" -->
+         <xs:element name="fill" type="xs:boolean" minOccurs="0" /> <!-- Default: true-->
+         <xs:element name="cull" type="xs:boolean" minOccurs="0" /> <!-- Default: true-->
+         <xs:element name="players" minOccurs="0">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="player" type="characterReference" minOccurs="1" maxOccurs="unbounded" />
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:all>
+   </xs:complexType>
+   
+</xs:schema>

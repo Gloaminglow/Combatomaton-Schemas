@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:include schemaLocation="types.xsd" />
+   <xs:include schemaLocation="reference.xsd" />
+
+   <xs:element name="music">
+      <xs:complexType>
+         <xs:all>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="music" type="xs:string" />
+            <xs:element name="unlock" type="xs:string" minOccurs="0" />
+         </xs:all>
+      </xs:complexType>
+   </xs:element>
+
+</xs:schema>

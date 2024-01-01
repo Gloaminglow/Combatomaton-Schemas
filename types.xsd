@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+   <!-- Common types available to other schemas. -->
+   <!-- Accessible Values -->
+   
+   <!-- All of the resource names -->
+   <xs:simpleType name="resource">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="health" />
+         <xs:enumeration value="energy" />
+         <xs:enumeration value="shield" />
+         <xs:enumeration value="ammo" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- All of the status effect names -->
+   <xs:simpleType name="status">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="damaged" />
+         <xs:enumeration value="slowed" />
+         <xs:enumeration value="marked" />
+         <xs:enumeration value="disrupted" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- All of the projectile type names -->
+   <xs:simpleType name="projectileType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="basic" />
+         <xs:enumeration value="big" />
+         <xs:enumeration value="small" />
+         <xs:enumeration value="beam" />
+         <xs:enumeration value="beam-pierce" />
+         <xs:enumeration value="beam-chain" />
+         <xs:enumeration value="beam-bounce" />
+         <xs:enumeration value="bounce" />
+         <xs:enumeration value="bounce-seek" />
+         <xs:enumeration value="seek" />
+         <xs:enumeration value="explode" />
+         <xs:enumeration value="web" />
+         <xs:enumeration value="fire" />
+         <xs:enumeration value="zone-marked" />
+         <xs:enumeration value="zone-slowed" />
+         <xs:enumeration value="zone-damaged" />
+         <xs:enumeration value="zone-disrupted" />
+         <xs:enumeration value="zone-death" />
+         <xs:enumeration value="grenade" />
+         <xs:enumeration value="rocket" />
+         <xs:enumeration value="rocket-seek" />
+         <xs:enumeration value="firefly" />
+         <xs:enumeration value="firefly-spin" />
+         <xs:enumeration value="reflect" />
+         <xs:enumeration value="gravity" />
+         <xs:enumeration value="pierce" />
+      </xs:restriction>
+   </xs:simpleType>
+   
+   <!-- Position vector -->
+   <xs:complexType name="vector2">
+      <xs:all>
+         <xs:element name="x" type="xs:float" />
+         <xs:element name="y" type="xs:float" />
+      </xs:all>
+   </xs:complexType>
+
+   <xs:simpleType name="fraction">
+      <xs:restriction base="xs:decimal">
+         <xs:minInclusive value="0" />
+         <xs:maxInclusive value="1" />
+      </xs:restriction>
+   </xs:simpleType>
+   
+</xs:schema>

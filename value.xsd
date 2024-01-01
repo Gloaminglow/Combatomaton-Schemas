@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+   <!-- Defines the XML types used for calculating values -->
+   <xs:include schemaLocation="types.xsd" />
+
+   <!-- Float Value -->
+   <xs:complexType name="value">
+      <xs:choice>
+         <xs:group ref="valueType" />
+         <xs:group ref="valueBoolType" />
+         <xs:group ref="valuePlayerType" />
+      </xs:choice>
+   </xs:complexType>
+   
+   <xs:complexType name="value-FLOAT">
+      <xs:sequence>
+         <xs:group ref="valueType" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="value-INT">
+      <xs:sequence>
+         <xs:group ref="valueType" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="value-BOOL">
+      <xs:sequence>
+         <xs:group ref="valueBoolType" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="value-PLAYER">
+      <xs:sequence>
+         <xs:group ref="valuePlayerType" />
+      </xs:sequence>
+   </xs:complexType>
+   
+   <!-- ==================================================================== -->
+   <!-- ==================================================================== -->
+   
+   <xs:group name="valueType">
+      <xs:choice>
+         <!-- value recursive cases -->
+         <xs:element name="plus" type="plusType" />
+         <xs:element name="minus" type="minusType" />
+         <xs:element name="times" type="timesType" />
+         <xs:element name="divide" type="divideType" />
+         <xs:element name="min" type="minType" />
+         <xs:element name="max" type="maxType" />
+         <!-- value & value-bool recursive case -->
+         <xs:element name="if" type="ifType" />
+         <!-- base cases -->
+         <xs:element name="resource" type="resource" />
+         <xs:element name="ability-duration" />
+         <xs:element name="crit" /> <!-- crit chance of currently selected weapon -->
+         <xs:element name="fire-delay" /> <!-- fire delay of currently selected weapon -->
+         <xs:element name="ammo-needed" /> <!-- ammo needed for 1 shot to be reloaded for currently selected weapon -->
+         <xs:element name="variable" type="xs:string" />
+         <xs:element name="constant" type="xs:float" />
+          <!-- for ability gooduse -->
+         <xs:element name="hostile-status" type="status" /> <!-- proportion of hostiles afflicted with that status -->
+         <xs:element name="team-resource" type="resource" /> <!-- proportion of teammates with resource -->
+         <xs:element name="team-alive" /> <!-- proportion of teammates that are alive -->
+         <xs:element name="team-dead" /> <!-- proportion of teammates dead. reduced by near death, increased by about to respawn. used for necromancy -->
+         <xs:element name="weapon" /> <!-- if the characters target is in range of the weapon. Specual weapon if the equipment gives one, otherwise currently held -->
+      </xs:choice>
+   </xs:group>
+
+   <!-- Bool Value -->
+   <xs:group name="valueBoolType">
+      <xs:choice>
+         <!-- recursive cases -->
+         <xs:element name="and" type="andType" />
+         <xs:element name="or" type="orType" />
+         <xs:element name="xor" type="xorType" />
+         <xs:element name="not" type="notType" />
+         <!-- value-based classes -->
+         <xs:element name="less" type="lessType" />
+         <xs:element name="greater" type="greaterType" />
+         <xs:element name="equal" type="equalType" />
+         <!-- player-value based classes -->
+         <xs:element name="same" type="samePlayerType" />
+         <!-- base cases -->
+         <xs:element name="true" />
+         <xs:element name="false" />
+         <!-- returns true if self affected by status -->
+         <xs:element name="status" type="status" />
+         <xs:element name="grounded" />
+         <xs:element name="ability-active" />
+         <xs:element name="phased" />
+         <xs:element name="invisible" />
+         <xs:element name="dead" /> <!-- returns true if IsDead -->
+          <!-- for ability gooduse -->
+         <xs:element name="combat" /> <!-- if character is in combat -->
+         <xs:element name="below" /> <!-- if there is not a death zone below -->
+      </xs:choice>
+   </xs:group>
+
+   <!-- Player Reference type -->
+   <xs:group name="valuePlayerType">
+      <xs:choice>
+         <!-- base selectors -->
+         <xs:element name="player-variable" type="xs:string" />
+         <xs:element name="self" />
+         <xs:element name="none" />
+      </xs:choice>
+   </xs:group>
+   
+   
+   <!-- Float value subtypes -->
+   
+   <xs:complexType name="plusType">
+      <xs:sequence>
+         <xs:group ref="valueType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="minusType">
+      <xs:sequence>
+         <xs:group ref="valueType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="timesType">
+      <xs:sequence>
+         <xs:group ref="valueType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="divideType">
+      <xs:sequence>
+         <xs:group ref="valueType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="minType">
+      <xs:sequence>
+         <xs:group ref="valueType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="maxType">
+      <xs:sequence>
+         <xs:group ref="valueType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="ifType">
+      <xs:sequence>
+         <xs:group ref="valueBoolType" />
+         <xs:group ref="valueType" />
+         <xs:group ref="valueType" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- Bool Value subtypes -->
+
+   <xs:complexType name="andType">
+      <xs:sequence>
+         <xs:group ref="valueBoolType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="orType">
+      <xs:sequence>
+         <xs:group ref="valueBoolType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="xorType">
+      <xs:sequence>
+         <xs:group ref="valueBoolType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="notType">
+      <xs:sequence>
+         <xs:group ref="valueBoolType" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="lessType">
+      <xs:sequence>
+         <xs:group ref="valueType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="equalType">
+      <xs:sequence>
+         <xs:group ref="valueType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="greaterType">
+      <xs:sequence>
+         <xs:group ref="valueType" maxOccurs="unbounded" minOccurs="2" />
+      </xs:sequence>
+   </xs:complexType>
+   
+   <xs:complexType name="samePlayerType">
+      <xs:sequence>
+         <xs:group ref="valuePlayerType" />
+         <xs:group ref="valuePlayerType" />
+      </xs:sequence>
+   </xs:complexType>
+
+</xs:schema>

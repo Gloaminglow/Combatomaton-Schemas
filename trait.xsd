@@ -1,0 +1,576 @@
+<?xml version="1.0"?>
+<!-- Schema definition for trait xml files -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" >
+   <xs:include schemaLocation="value.xsd" />
+   <xs:include schemaLocation="types.xsd" />
+   <xs:include schemaLocation="reference.xsd" />
+   <xs:include schemaLocation="weapon.xsd" />
+
+   <!-- Root element: trait -->
+   <xs:element name="trait">
+      <xs:complexType>
+         <xs:sequence>
+            <!-- allow multiple (0+) of all -->
+            <xs:element name="metadata" type="trait-metadata" />
+            <xs:element name="variable" type="variable-declaration" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="multiplier" type="multiplier" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="toggle" type="booleanMultiplier" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="effect" type="trigger-effect" minOccurs="0" maxOccurs="unbounded" />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+
+   <!-- ========================================================== -->
+   <!-- Type Definitions: Complex Types -->
+   <!-- ========================================================== -->
+
+   <!-- Metadata for the trait.
+    Contains Name, Type (trait or ability), description, image, etc. -->
+   <xs:complexType name="trait-metadata">
+      <xs:all>
+         <xs:element name="name" type="xs:string" />
+         <xs:element name="type">
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:enumeration value="energy" />
+                  <xs:enumeration value="attack" />
+                  <xs:enumeration value="defend" />
+                  <xs:enumeration value="utility" />
+                  <xs:enumeration value="flaw" />
+                  <xs:enumeration value="other" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="description" type="xs:string" />
+         <xs:element name="image" type="xs:string" minOccurs="0" />
+         <xs:element name="unlock" type="xs:string" minOccurs="0"/>
+      </xs:all>
+   </xs:complexType>   
+   
+   <!-- A Variable declaration. 
+    Variables are statically typed, and optionally can have an initial value.
+    Variables are used to carry values over from one effect to another. -->
+   <xs:complexType name="variable-declaration">
+      <xs:sequence>
+         <xs:element name="name" type="xs:string" />
+         <xs:element name="type" type="allowedTypes" />
+         <!-- optional set inital value -->
+         <xs:element name="value" minOccurs="0" type="xs:string" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- A stat multiplier.
+    Stat multipliers modify some stat, and optionally can have a modifier
+    that makes the multiplier only apply when certain conditions are met. -->
+   <xs:complexType name="multiplier" >
+      <xs:sequence>
+         <xs:element name="name" type="floatMultiplier" />
+         <!-- modifies when the multiplier applies -->
+         <xs:element name="modifier" type="modifier" minOccurs="0" />
+         <xs:element name="value" type="value-FLOAT" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- A boolean toggle.
+   Toggles modify some stat that is represented by a boolean instead of a float -->
+   <xs:complexType name="booleanMultiplier" >
+      <xs:sequence>
+         <xs:element name="name" type="boolMultiplier" />
+         <!-- modifies when the multiplier applies -->
+         <xs:element name="modifier" type="modifier" minOccurs="0" />
+         <xs:element name="set" type="value-BOOL" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- A trigger effect.
+    Trigger effects trigger when the trigger condition happens, and
+    everything in the (optional) modifier is true. If so, all of its
+    events happen, in order. -->
+   <xs:complexType name="trigger-effect" >
+      <xs:sequence>
+         <xs:element name="trigger" type="triggerName" maxOccurs="unbounded"/>
+         <!-- modifier limits further when the event can trigger -->
+         <xs:element name="modifier" type="modifier" minOccurs="0" />
+         <xs:element name="effects" type="effects" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- ================================================================== -->
+   <!-- ================== Modifier Types ================================ -->
+   <!-- ================================================================== -->
+   <!-- Modifiers are used to further filter when an effect applies.
+    They can apply to trigger conditions to make the event only run if certain
+    conditions are met when the trigger happens.
+    They can apply to multiplier effects to only modify the relevant stat when
+    certain conditions are met (i.e. increasing damage when health is low).
+    They can apply to targets to only apply the effect on targets matching
+    certain conditions (i.e. applying slowed to all marked enemies). -->
+   
+   <xs:complexType name="modifier">
+      <xs:sequence>
+         <xs:element name="chance" type="fraction" minOccurs="0" />
+         <xs:group ref="valueBoolType" minOccurs="0" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- ================================================================== -->
+   <!-- ================== Effect Types ================================== -->
+   <!-- ================================================================== -->
+   <!-- Effects are run when a trigger effect's trigger condition is satisfied -->
+
+   <!-- A single effect -->
+   <xs:complexType name="effects" >
+      <xs:group ref="effectGroup" minOccurs="1" maxOccurs="unbounded" />
+   </xs:complexType>
+
+   <!-- all kinds of effects -->
+   <xs:group name="effectGroup">
+      <xs:choice>
+         <xs:element name="next" type="next-effect" />
+         <xs:element name="time" type="time-effect" />
+         <xs:element name="gain" type="gain-effect" />
+         <xs:element name="set" type="set-effect" />
+         <xs:element name="use" type="use-effect" />
+         <xs:element name="inflict" type="inflict-effect" />
+         <xs:element name="clear" type="clear-effect" />
+         <xs:element name="projectile" type="projectile-effect" />
+         <!-- Reload weapons. The value determines whether to reload just
+         the active mainhand weapon (true) or all other weapons (false). -->
+         <xs:element name="reload" type="reload-effect" />
+         <xs:element name="deflect" />
+         <xs:element name="variable" type="variable-effect" />
+         <xs:element name="phase" type="target-duration-effect" />
+         <xs:element name="cloak" type="target-duration-effect" />
+         <xs:element name="revive" type="target-amount-effect" />
+         <xs:element name="explode" type="target-amount-effect" />
+         <xs:element name="summon" type="summon-effect" /> <!-- TODO: parse -->
+         <xs:element name="weapon" type="weapon-effect" />
+         <xs:element name="remove-weapon" type="target-effect" /> <!-- removes special weapo from a character. only makes sense alongside weapon -->
+         <xs:element name="landmine" type="landmine-effect" />
+         <xs:element name="delay" type="delay-effect" />
+         <xs:element name="team-crit" type="team-modifier-effect" /> <!-- TODO: parse -->
+         <xs:element name="team-damage" type="team-modifier-effect" /> <!-- TODO: parse -->
+         <xs:element name="team-firerate" type="team-modifier-effect" /> <!-- TODO: parse -->
+         <xs:element name="kill-character" type="target-effect" />
+         <!-- FX effects -->
+         <xs:element name="sound" type="sound-effect" />
+         <xs:element name="particle" type="particle-effect" />
+         <xs:element name="interrupt" /> <!-- ends the currently active ability via ability.End() -->
+      </xs:choice>
+   </xs:group>
+   
+   <!-- abstract type for effects that affect a target -->
+   <xs:complexType name="target-effect">
+      <xs:sequence>
+         <xs:element name="target" type="target" />
+      </xs:sequence>
+   </xs:complexType>
+   
+   <!-- abstract type for effects that affect a target for a certain duration -->
+   <xs:complexType name="target-duration-effect">
+      <xs:sequence>
+         <xs:element name="target" type="target" />
+         <xs:element name="duration" type="value-INT" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- abstract type for effects that can affect a target
+   for a certain duration or indefinitely. Used for effects that
+   usually reside within abilites -->
+   <xs:complexType name="target-durationable-effect">
+      <xs:sequence>
+         <xs:element name="target" type="target" />
+         <!-- defaults to indefinite -->
+         <xs:element name="duration" type="value-INT" minOccurs="0" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- abstract type for effects that affect a target for a certain amount -->
+   <xs:complexType name="target-amount-effect">
+      <xs:sequence>
+         <xs:element name="target" type="target" />
+         <xs:element name="amount" type="value-FLOAT" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- the next time the given multiplier would be used, instead
+    use "value" -->
+   <!-- TODO: this should be extended to affect arbitrary TARGETs -->
+   <xs:complexType name="next-effect">
+      <xs:choice>
+         <xs:sequence>
+            <xs:element name="multiplier" type="floatMultiplier" />
+            <xs:element name="target" type="target"/>
+            <xs:element name="value" type="value-FLOAT" />
+         </xs:sequence>
+         <xs:sequence>
+            <xs:element name="toggle" type="boolMultiplier" />
+            <xs:element name="target" type="target"/>
+            <xs:element name="set" type="value-BOOL" />
+         </xs:sequence>
+      </xs:choice>
+   </xs:complexType>
+
+   <!-- For the duration, whenever the given multiplier would
+    be used, instead use "value" -->
+   <!-- TODO: this should be extended to affect arbitraty TARGETs -->
+   <xs:complexType name="time-effect">
+      <xs:complexContent>
+         <xs:extension base="next-effect">
+            <xs:sequence>
+               <xs:element name="duration" type="value-INT" minOccurs="0"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- The target gains an amount of a certain resource -->
+   <xs:complexType name="gain-effect">
+      <xs:complexContent>
+         <xs:extension base="target-amount-effect">
+            <xs:sequence>
+               <xs:element name="resource" type="resource" />
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- Sets the resource amount of the target to the value -->
+   <xs:complexType name="set-effect">
+      <xs:complexContent>
+         <xs:extension base="target-amount-effect">
+            <xs:sequence>
+               <xs:element name="resource" type="resource" />
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- uses an amount of a resource, and optionally returns the 
+    amount actually used and assigns it to the given variable. For shields, use ShieldUse -->
+   <xs:complexType name="use-effect">
+      <xs:all>
+         <xs:element name="resource" type="resource" />
+         <xs:element name="amount" type="value-FLOAT" />
+         <!-- the name of the variable to place the result in -->
+         <xs:element name="result" type="xs:string" minOccurs="0" />
+      </xs:all>
+   </xs:complexType>
+
+   <!-- inflict the given status on the target for the duration -->
+   <xs:complexType name="inflict-effect">
+      <xs:complexContent>
+         <xs:extension base="target-durationable-effect">
+            <xs:sequence>
+               <xs:element name="status" type="status" />
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- inflict the given status on the target for the duration -->
+   <xs:complexType name="clear-effect">
+      <xs:complexContent>
+         <xs:extension base="target-effect">
+            <xs:sequence>
+               <xs:element name="status" type="status" />
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- reload the selected weapons the indicated amount -->
+   <xs:complexType name="reload-effect">
+      <xs:complexContent>
+         <xs:extension base="target-effect">
+            <xs:sequence>
+               <xs:element name="weapon">
+                  <xs:simpleType>
+                     <xs:restriction base="xs:string">
+                        <xs:enumeration value="held" />
+                        <xs:enumeration value="stowed" />
+                        <xs:enumeration value="all" />
+                     </xs:restriction>
+                  </xs:simpleType>
+               </xs:element>
+               <xs:element name="amount" type="xs:positiveInteger" default="1" minOccurs="0" />
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- Projectile -->
+   <xs:complexType name="projectile">
+      <xs:all>
+         <xs:element name="projectile" type="projectileType" />
+         <xs:element name="effects" type="projectileEffectsReference" minOccurs="0" />
+         <xs:element name="color" minOccurs="0" >
+            <xs:simpleType>
+               <xs:restriction base="xs:int">
+                  <xs:minInclusive value="1" />
+                  <xs:maxInclusive value="8" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <!-- -->
+         <xs:element name="speed" type="value-FLOAT" minOccurs="0" /> <!-- default 0 -->
+         <xs:element name="damage" type="value-FLOAT" />
+         <xs:element name="range" type="value-FLOAT" />
+         <xs:element name="crit" type="value-FLOAT" minOccurs="0" /> <!-- default 0 -->
+         <xs:element name="accuracy" type="value-FLOAT" minOccurs="0" /> <!-- default 0 -->
+      </xs:all>
+   </xs:complexType>
+   
+   <!-- Create a projectile with the given stats, at the target's location.
+    The projectile reference is the kind of projectile to create -->
+   <xs:complexType name="projectile-effect">
+      <xs:sequence>
+         <xs:element name="target" type="target" minOccurs="0" /> <!-- default self -->
+         <xs:element name="direction" type="vector2" minOccurs="0" /> <!-- default to player aim / up -->
+         <xs:group ref="projectile-emitter" minOccurs="1" maxOccurs="1" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:group name="projectile-emitter">
+      <xs:sequence>
+         <!-- <xs:element name="target" type="target" minOccurs="0" /> <!- - default self -->
+         <xs:element name="accuracy" type="xs:float" minOccurs="0" /> <!-- default 0 -->
+         <xs:element name="burst-size" type="xs:positiveInteger" default="1" minOccurs="0" />
+         <xs:element name="playerbound" type="xs:boolean" minOccurs="0" /> <!-- Default: false-->
+         <xs:element name="projectile" type="weaponProjectile" />
+         <xs:element name="sounds" minOccurs="0">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="shoot" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="secondary" minOccurs="0">
+            <xs:complexType>
+               <xs:group ref="projectile-emitter" />
+            </xs:complexType>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
+   
+   <!-- Create a landmine with the given stats, at the target's location. -->
+   <xs:complexType name="landmine-effect" >
+      <xs:complexContent>
+         <xs:extension base="projectile-effect">
+            <xs:sequence>
+               <xs:element name="status" type="status" minOccurs="0" /> <!-- default nothing -->
+               <xs:element name="duration" type="xs:positiveInteger" minOccurs="0" /> <!-- default 0 -->
+               <xs:element name="arming-delay" type="xs:positiveInteger" /> <!-- default 0 -->
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- Assigns a value to a variable. Since variables are
+    statically typed, the type of the variable must match the
+    type of the value (not checked by schema). -->
+   <xs:complexType name="variable-effect">
+      <xs:all>
+         <!-- name of variable -->
+         <xs:element name="name" type="xs:string" />
+         <xs:element name="value" type="value" />
+      </xs:all>
+   </xs:complexType>
+
+   <!-- Summon a character reference
+   TODO: parse this
+   -->
+   <xs:complexType name="summon-effect">
+      <xs:complexContent>
+         <!-- spawn color, type(walk,float,sit) -->
+         <!-- summon location and duration -->
+         <xs:extension base="target-durationable-effect">
+            <xs:sequence>
+               <xs:element name="type">
+                  <xs:simpleType>
+                     <xs:restriction base="xs:string">
+                        <xs:enumeration value="walk" />
+                        <xs:enumeration value="float" />
+                        <xs:enumeration value="sit" />
+                     </xs:restriction>
+                  </xs:simpleType>
+               </xs:element>
+               <xs:element name="character" type="characterReference" />
+               <xs:element name="summon-color" type="energyColor" minOccurs="0"  />
+               <xs:element name="shield" minOccurs="0" type="fraction" /> <!-- defaults to 0 -->
+               <xs:element name="health" type="xs:float" />
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- Give the target the specified weapon
+   TODO: parse this
+   -->
+   <xs:complexType name="weapon-effect">
+      <xs:all>
+         <!-- defaults to indefinite -->
+         <xs:element name="duration" type="value-INT" minOccurs="0" />
+         <xs:element name="weapon" type="xs:string" />
+      </xs:all>
+   </xs:complexType>
+   
+   <!-- Does another effect after a given amount of time -->
+   <xs:complexType name="delay-effect" >
+      <xs:sequence>
+         <xs:element name="duration" type="xs:positiveInteger" />
+         <xs:element name="repeat" type="xs:positiveInteger" minOccurs="0" />
+         <xs:group ref="effectGroup" minOccurs="1" maxOccurs="unbounded" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- Causes a character to produce the indicated particle -->
+   <xs:complexType name="particle-effect" >
+      <xs:complexContent>
+         <xs:extension base="target-durationable-effect"> <!-- defaults to 0 -->
+            <xs:sequence>
+               <xs:element name="type">
+                  <xs:simpleType>
+                     <xs:restriction base="xs:string">
+                        <xs:enumeration value="bubble" />
+                        <xs:enumeration value="cloud" />
+                        <xs:enumeration value="star" />
+                        <xs:enumeration value="flame" />
+                        <xs:enumeration value="sparkle" />
+                     </xs:restriction>
+                  </xs:simpleType>
+               </xs:element>
+               <xs:element name="color" type="energyColor"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- Causes a character to play the desired sound -->
+   <xs:complexType name="sound-effect" >
+      <xs:complexContent>
+         <xs:extension base="target-durationable-effect"> <!-- if duration is present and nonzero, loop for that duration, else just sound -->
+            <xs:sequence>
+               <xs:element name="sound" type="soundReference" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- A Target determines who is affected by some traits.
+    It selects everyone of the chosen targetType that also
+    matches the optional modifier. -->
+   <xs:complexType name="target" >
+      <xs:sequence>
+         <xs:choice>
+            <xs:element name="team">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:enumeration value="self" />
+                     <xs:enumeration value="enemies" />
+                     <xs:enumeration value="all" />
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+            <xs:element name="player">
+               <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                     <xs:enumeration value="self" />
+                     <xs:enumeration value="enemies" />
+                     <xs:enumeration value="all" />
+                     <xs:enumeration value="allies" />
+                     <xs:enumeration value="target" />
+                  </xs:restriction>
+               </xs:simpleType>
+            </xs:element>
+         </xs:choice>
+         <xs:element name="modifier" type="modifier" minOccurs="0" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- Modifies the target team's value modifier: crit, damage, or firerate -->
+   <xs:complexType name="team-modifier-effect" >
+      <xs:all>
+         <xs:element name="target" type="target" minOccurs="0" /> <!-- default own team, really only makes sense for own team -->
+         <xs:element name="value" type="value-FLOAT" />
+      </xs:all>
+   </xs:complexType>
+
+   <!-- =========================================================== -->
+   <!-- Type Definitions: Simple Types -->
+   <!-- And Valid function names -->
+   <!-- =========================================================== -->
+
+   <!-- All the valid trigger names -->
+   <xs:simpleType name="triggerName">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="kill" />
+         <xs:enumeration value="crit" />
+         <xs:enumeration value="deal-damage" />
+         <!-- you are hit by a projectile -->
+         <xs:enumeration value="hit" />
+         <xs:enumeration value="lose-health" />
+         <xs:enumeration value="shield-break" />
+         <xs:enumeration value="death" />
+         <xs:enumeration value="respawn" />
+         <xs:enumeration value="revive" />
+         <xs:enumeration value="phase-in" />
+         <xs:enumeration value="phase-out" />
+         <xs:enumeration value="go-visible" />
+         <xs:enumeration value="go-invisible" />
+         <xs:enumeration value="reload" />
+         <xs:enumeration value="pickup" />
+         <xs:enumeration value="shoot" />
+         <xs:enumeration value="gain-health" />
+         <xs:enumeration value="gain-ammo" />
+         <xs:enumeration value="gain-energy" />
+         <xs:enumeration value="use-ammo" />
+         <xs:enumeration value="use-energy" />
+         <xs:enumeration value="use-ability" />
+         <xs:enumeration value="tick" />
+         <xs:enumeration value="child-hit" /> <!-- a projectile from this equipment hits a character -->
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="floatMultiplier">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="ammo" />
+         <xs:enumeration value="damage-dealt" />
+         <xs:enumeration value="damage-taken" />
+         <xs:enumeration value="energy" />
+         <xs:enumeration value="heal" />
+         <xs:enumeration value="accuracy" />
+         <xs:enumeration value="fire-rate" />
+         <xs:enumeration value="speed" />
+         <xs:enumeration value="crit" />
+         <xs:enumeration value="respawn" />
+         <xs:enumeration value="duration" />
+         <xs:enumeration value="tick-rate" /> <!-- used for hyper (causes ticks on tick, and adjusts pitch mult) -->
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="boolMultiplier">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="lose-ability" />
+         <xs:enumeration value="reserve" />
+         <xs:enumeration value="obscure-ammo" />
+         <!-- takes in a character reference -->
+         <xs:enumeration value="valid-target" />
+         <xs:enumeration value="pierce" />
+         <!-- only for abilities -->
+         <xs:enumeration value="phase-tick" /> <!-- does ability tick while phased? Defaults to true -->
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- All the allowed types for variables -->
+   <xs:simpleType name="allowedTypes">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="int" />
+         <xs:enumeration value="float" />
+         <xs:enumeration value="bool" />
+         <xs:enumeration value="Player" />
+         <xs:enumeration value="Projectile" />
+      </xs:restriction>
+   </xs:simpleType>
+
+</xs:schema>

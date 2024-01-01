@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<!-- Schema definition for trait xml files -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" >
+   <xs:include schemaLocation="trait.xsd"></xs:include>
+
+   <xs:element name="ability">
+      <xs:complexType>
+         <xs:sequence>
+            <!-- allow multiple (0+) of all -->
+            <xs:element name="metadata" type="ability-metadata" />
+            <xs:element name="variable" type="variable-declaration" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="multiplier" type="multiplier-ability" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="toggle" type="booleanMultiplier" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="effect" type="ability-effect" minOccurs="0" maxOccurs="unbounded" />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+
+
+   <xs:complexType name="ability-metadata">
+      <xs:all>
+         <xs:element name="name" type="xs:string" />
+         <xs:element name="description" type="xs:string" />
+         <xs:element name="image" type="xs:string" minOccurs="0" />
+         <xs:element name="cost" type="xs:float" />
+         <xs:element name="duration" type="xs:positiveInteger" />
+         <xs:element name="unlock" type="xs:string" minOccurs="0"/>
+      </xs:all>
+   </xs:complexType>
+
+   <!-- A stat multiplier.
+    Stat multipliers modify some stat, and optionally can have a modifier
+    that makes the multiplier only apply when certain conditions are met. -->
+    <xs:complexType name="multiplier-ability" >
+      <xs:sequence>
+         <xs:element name="name" type="abilityMultiplier" />
+         <!-- modifies when the multiplier applies -->
+         <xs:element name="modifier" type="modifier" minOccurs="0" />
+         <xs:element name="value" type="value-FLOAT" />
+      </xs:sequence>
+   </xs:complexType>
+   
+   <xs:simpleType name="abilityMultiplier">
+      <xs:union memberTypes="floatMultiplier abilityOnlyMultipliers" />
+   </xs:simpleType>
+
+   <!-- only for abilities -->
+   <xs:simpleType name="abilityOnlyMultipliers">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="good-use" /> <!-- value telling the ai how good of an idea it is to use ability. Defaults to 0.5 -->
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- A boolean toggle.
+   Toggles modify some stat that is represented by a boolean instead of a float -->
+    <xs:complexType name="boolean-ability" >
+      <xs:sequence>
+         <xs:element name="name" type="abilityBoolean" />
+         <!-- modifies when the multiplier applies -->
+         <xs:element name="modifier" type="modifier" minOccurs="0" />
+         <xs:element name="set" type="value-BOOL" />
+      </xs:sequence>
+   </xs:complexType>
+
+   <xs:simpleType name="abilityBoolean">
+      <xs:union memberTypes="boolMultiplier abilityOnlyBooleans" />
+   </xs:simpleType>
+
+   <!-- only for abilities -->
+   <xs:simpleType name="abilityOnlyBooleans">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="phase-tick" /> <!-- whether the ability ticks (counts down and does tick triggers) while phased. default true -->
+      </xs:restriction>
+   </xs:simpleType>
+
+   <!-- A trigger effect.
+    Trigger effects trigger when the trigger condition happens, and
+    everything in the (optional) modifier is true. If so, all of its
+    events happen, in order. -->
+    <xs:complexType name="ability-effect" >
+      <xs:sequence>
+         <xs:element name="trigger" maxOccurs="unbounded">
+            <xs:simpleType>
+               <xs:union memberTypes="triggerName abilityOnlyTriggers"></xs:union>
+            </xs:simpleType>
+         </xs:element>
+         <!-- modifier limits further when the event can trigger -->
+         <xs:element name="modifier" type="modifier" minOccurs="0" />
+         <xs:element name="effects">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:choice minOccurs="1" maxOccurs="unbounded">
+                     <xs:group ref="effectGroup" />
+                     <!-- only for abilities -->
+                  </xs:choice>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+
+   <!-- only for abilities -->
+   <xs:simpleType name="abilityOnlyTriggers">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="begin" /> <!-- when the ability starts -->
+         <xs:enumeration value="end" /> <!-- when the ability ends. will always trigger alongside either finish or interrupt -->
+         <xs:enumeration value="finish" /> <!-- when the ability ends without interruption -->
+         <xs:enumeration value="interrupt" /> <!-- when the ability is interrupted -->
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema>

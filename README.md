@@ -1,7 +1,7 @@
 # Combatomaton-Schemas
 These are the XML schemas used to define content for mods in the 2D Platformer-shooter game _Combatomaton_. You can make a mod by creating a new folder in the `Data` folder and adding the appropriate XML files.
 
-The basic structure is as follows (folders end with a slash):
+The basic structure is as follows:
 ```
 Data
   Base (base game content)

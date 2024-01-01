@@ -1,7 +1,8 @@
-# Data format
-SVG file (xml), with each layer (`<g>` element) representing a separate part of the map
+# Map File Format
+Combatomaton maps are Scalable Vector Graphics images (.svg extension) and should be able to be edited with any image editing program that can handle SVG images.
+Each layer (`<g>` element) represents a separate part of the map data.
 ### Points:
-Points are represented by SVG `<ellipse>` elements, where `cx` and `cy` determine
+Various important map points are represented by SVG `<ellipse>` elements, where `cx` and `cy` (the center) determine
 the location of the point.
 ### Classes:
 The type of an svg object is determined by:

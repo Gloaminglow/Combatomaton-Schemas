@@ -5,7 +5,6 @@
    xmlns="https://github.com/Gloaminglow/Combatomaton-Schemas"
    xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
-
    <xs:include schemaLocation="https://raw.githubusercontent.com/Gloaminglow/Combatomaton-Schemas/main/reference.xsd" />
 
    <xs:element name="savefile">

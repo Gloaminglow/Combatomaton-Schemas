@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<xs:schema
+   elementFormDefault="qualified"
+   targetNamespace="https://github.com/Gloaminglow/Combatomaton-Schemas"
+   xmlns="https://github.com/Gloaminglow/Combatomaton-Schemas"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
    <!-- Common types available to other schemas. -->
    <!-- Accessible Values -->

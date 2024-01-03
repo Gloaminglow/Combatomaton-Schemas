@@ -1,7 +1,12 @@
 <?xml version="1.0"?>
 <!-- Schema definition for trait xml files -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" >
-   <xs:include schemaLocation="trait.xsd"></xs:include>
+<xs:schema
+   elementFormDefault="qualified"
+   targetNamespace="https://github.com/Gloaminglow/Combatomaton-Schemas"
+   xmlns="https://github.com/Gloaminglow/Combatomaton-Schemas"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+   <xs:include schemaLocation="https://raw.githubusercontent.com/Gloaminglow/Combatomaton-Schemas/main/trait.xsd"></xs:include>
 
    <xs:element name="ability">
       <xs:complexType>

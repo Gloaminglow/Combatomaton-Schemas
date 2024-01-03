@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema
-    elementFormDefault="qualified"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   elementFormDefault="qualified"
+   targetNamespace="https://github.com/Gloaminglow/Combatomaton-Schemas"
+   xmlns="https://github.com/Gloaminglow/Combatomaton-Schemas"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
-   <xs:include schemaLocation="types.xsd" />
-   <xs:include schemaLocation="reference.xsd" />
+   <xs:include schemaLocation="https://raw.githubusercontent.com/Gloaminglow/Combatomaton-Schemas/main/types.xsd" />
+   <xs:include schemaLocation="https://raw.githubusercontent.com/Gloaminglow/Combatomaton-Schemas/main/reference.xsd" />
 
    <xs:element name="level">
       <xs:complexType>

@@ -1,9 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   elementFormDefault="qualified"
+   targetNamespace="https://github.com/Gloaminglow/Combatomaton-Schemas"
+   xmlns="https://github.com/Gloaminglow/Combatomaton-Schemas"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
 >
    <!-- Defines the XML types used for calculating values -->
-   <xs:include schemaLocation="types.xsd" />
+   <xs:include schemaLocation="https://raw.githubusercontent.com/Gloaminglow/Combatomaton-Schemas/main/types.xsd" />
 
    <!-- Float Value -->
    <xs:complexType name="value">

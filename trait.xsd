@@ -160,6 +160,8 @@
          <!-- FX effects -->
          <xs:element name="sound" type="sound-effect" />
          <xs:element name="particle" type="particle-effect" />
+         <xs:element name="overlay" type="overlay-effect" />
+         <xs:element name="image" type="image-effect" />
          <xs:element name="interrupt" /> <!-- ends the currently active ability via ability.End() -->
       </xs:choice>
    </xs:group>
@@ -462,6 +464,66 @@
       </xs:complexContent>
    </xs:complexType>
 
+   <xs:complexType name="overlay-effect">
+      <xs:complexContent>
+         <xs:extension base="target-durationable-effect">
+            <xs:sequence>
+               <xs:element name="image" type="xs:string" />
+               <!-- default: CENTER -->
+               <xs:element name="align" minOccurs="0">
+                  <xs:simpleType>
+                     <xs:restriction base="xs:string">
+                        <xs:enumeration value="center" />
+                        <xs:enumeration value="top" />
+                        <xs:enumeration value="bottom" />
+                        <xs:enumeration value="left" />
+                        <xs:enumeration value="right" />
+                        <xs:enumeration value="top-left" />
+                        <xs:enumeration value="top-right" />
+                        <xs:enumeration value="bottom-left" />
+                        <xs:enumeration value="bottom-right" />
+                     </xs:restriction>
+                  </xs:simpleType>
+               </xs:element>
+               <!-- default: FIT -->
+               <xs:element name="scale" minOccurs="0">
+                  <xs:simpleType>
+                     <xs:restriction base="xs:string">
+                        <xs:enumeration value="min" />
+                        <xs:enumeration value="max" />
+                        <xs:enumeration value="fit" />
+                        <xs:enumeration value="none" />
+                     </xs:restriction>
+                  </xs:simpleType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- Causes a character to play the desired sound -->
+   <xs:complexType name="image-effect" >
+      <xs:complexContent>
+         <xs:extension base="target-durationable-effect"> <!-- if duration is present and nonzero, display for that duration, else flash-->
+            <xs:sequence>
+               <xs:element name="image" type="xs:string" />
+               <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element name="offset" type="value-vector2" />
+                  <xs:element name="scale" type="value-vector2" />
+                  <xs:element name="rotate" type="value-FLOAT" />
+               </xs:choice>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   
+   <xs:complexType name="value-vector2">
+      <xs:sequence>
+         <xs:element name="x" type="value-FLOAT" />
+         <xs:element name="y" type="value-FLOAT" />
+      </xs:sequence>
+   </xs:complexType>
+
    <!-- A Target determines who is affected by some traits.
     It selects everyone of the chosen targetType that also
     matches the optional modifier. -->
@@ -526,6 +588,7 @@
          <xs:enumeration value="reload" />
          <xs:enumeration value="pickup" />
          <xs:enumeration value="shoot" />
+         <xs:enumeration value="swap" />
          <xs:enumeration value="gain-health" />
          <xs:enumeration value="gain-ammo" />
          <xs:enumeration value="gain-energy" />

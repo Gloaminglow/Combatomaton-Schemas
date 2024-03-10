@@ -43,7 +43,14 @@
        <xs:element name="legs">
           <xs:complexType>
              <xs:sequence>
-                <!-- TODO: somethign for the legs themselves -->
+               <xs:element name="front-upper" type="model" minOccurs="0" />
+               <xs:element name="front-knee" type="model" minOccurs="0" />
+               <xs:element name="front-lower" type="model" minOccurs="0" />
+               <xs:element name="front-foot" type="model" minOccurs="0" />
+               <xs:element name="back-upper" type="model" minOccurs="0" />
+               <xs:element name="back-knee" type="model" minOccurs="0" />
+               <xs:element name="back-lower" type="model" minOccurs="0" />
+               <xs:element name="back-foot" type="model" minOccurs="0" />
                 <xs:element name="unlock" type="xs:string" minOccurs="0" />
              </xs:sequence>
           </xs:complexType>

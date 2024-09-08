@@ -93,7 +93,10 @@
     events happen, in order. -->
    <xs:complexType name="trigger-effect" >
       <xs:sequence>
-         <xs:element name="trigger" type="triggerName" maxOccurs="unbounded"/>
+         <xs:choice maxOccurs="unbounded">
+            <xs:element name="trigger" type="triggerName" />
+            <xs:element name="message" type="xs:string" />
+         </xs:choice>
          <!-- modifier limits further when the event can trigger -->
          <xs:element name="modifier" type="modifier" minOccurs="0" />
          <xs:element name="effects" type="effects" />
@@ -116,6 +119,13 @@
          <xs:element name="chance" type="fraction" minOccurs="0" />
          <xs:group ref="valueBoolType" minOccurs="0" />
       </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="limiter">
+      <xs:all>
+         <xs:element name="max" type="xs:int"/>
+         <xs:element name="value" type="value-FLOAT"/>
+      </xs:all>
    </xs:complexType>
 
    <!-- ================================================================== -->
@@ -144,24 +154,27 @@
          <xs:element name="reload" type="reload-effect" />
          <xs:element name="deflect" />
          <xs:element name="variable" type="variable-effect" />
+         <xs:element name="character-variable" type="variable-character-effect" />
          <xs:element name="phase" type="target-duration-effect" />
          <xs:element name="cloak" type="target-duration-effect" />
          <xs:element name="revive" type="target-amount-effect" />
          <xs:element name="explode" type="target-amount-effect" />
-         <xs:element name="summon" type="summon-effect" /> <!-- TODO: parse -->
+         <xs:element name="summon" type="summon-effect" />
          <xs:element name="weapon" type="weapon-effect" />
          <xs:element name="remove-weapon" type="target-effect" /> <!-- removes special weapo from a character. only makes sense alongside weapon -->
          <xs:element name="landmine" type="landmine-effect" />
          <xs:element name="delay" type="delay-effect" />
-         <xs:element name="team-crit" type="team-modifier-effect" /> <!-- TODO: parse -->
-         <xs:element name="team-damage" type="team-modifier-effect" /> <!-- TODO: parse -->
-         <xs:element name="team-firerate" type="team-modifier-effect" /> <!-- TODO: parse -->
+         <xs:element name="team-crit" type="team-modifier-effect" />
+         <xs:element name="team-damage" type="team-modifier-effect" />
+         <xs:element name="team-firerate" type="team-modifier-effect" />
          <xs:element name="kill-character" type="target-effect" />
          <!-- FX effects -->
          <xs:element name="sound" type="sound-effect" />
          <xs:element name="particle" type="particle-effect" />
          <xs:element name="overlay" type="overlay-effect" />
          <xs:element name="image" type="image-effect" />
+
+         <xs:element name="message" type="message-effect" />
          <xs:element name="interrupt" /> <!-- ends the currently active ability via ability.End() -->
       </xs:choice>
    </xs:group>
@@ -334,6 +347,7 @@
       <xs:sequence>
          <xs:element name="target" type="target" minOccurs="0" /> <!-- default self -->
          <xs:element name="direction" type="vector2" minOccurs="0" /> <!-- default to player aim / up -->
+         <xs:element name="offset" type="vector2" minOccurs="0" /> <!-- default 0,0 -->
          <xs:group ref="projectile-emitter" minOccurs="1" maxOccurs="1" />
       </xs:sequence>
    </xs:complexType>
@@ -367,7 +381,8 @@
             <xs:sequence>
                <xs:element name="status" type="status" minOccurs="0" /> <!-- default nothing -->
                <xs:element name="duration" type="xs:positiveInteger" minOccurs="0" /> <!-- default 0 -->
-               <xs:element name="arming-delay" type="xs:positiveInteger" /> <!-- default 0 -->
+               <xs:element name="arming-delay" type="xs:positiveInteger" minOccurs="0"/> <!-- default 0 -->
+               <xs:element name="arming-sound" type="soundReference" minOccurs="0" maxOccurs="unbounded" />
             </xs:sequence>
          </xs:extension>
       </xs:complexContent>
@@ -380,7 +395,18 @@
       <xs:all>
          <!-- name of variable -->
          <xs:element name="name" type="xs:string" />
-         <xs:element name="value" type="value" />
+         <xs:element name="value" type="value-FLOAT" />
+      </xs:all>
+   </xs:complexType>
+
+   <!-- Assigns a value to a variable. Since variables are
+    statically typed, the type of the variable must match the
+    type of the value (not checked by schema). -->
+   <xs:complexType name="variable-character-effect">
+      <xs:all>
+         <!-- name of variable -->
+         <xs:element name="name" type="xs:string" />
+         <xs:element name="value" type="value-PLAYER" />
       </xs:all>
    </xs:complexType>
 
@@ -406,6 +432,7 @@
                <xs:element name="summon-color" type="energyColor" minOccurs="0"  />
                <xs:element name="shield" minOccurs="0" type="fraction" /> <!-- defaults to 0 -->
                <xs:element name="health" type="xs:float" />
+               <xs:element name="variable" type="xs:string" minOccurs="0" /> <!-- saves the summoned character to a variable -->
             </xs:sequence>
          </xs:extension>
       </xs:complexContent>
@@ -436,17 +463,7 @@
       <xs:complexContent>
          <xs:extension base="target-durationable-effect"> <!-- defaults to 0 -->
             <xs:sequence>
-               <xs:element name="type">
-                  <xs:simpleType>
-                     <xs:restriction base="xs:string">
-                        <xs:enumeration value="bubble" />
-                        <xs:enumeration value="cloud" />
-                        <xs:enumeration value="star" />
-                        <xs:enumeration value="flame" />
-                        <xs:enumeration value="sparkle" />
-                     </xs:restriction>
-                  </xs:simpleType>
-               </xs:element>
+               <xs:element name="type" type="particleType"/>
                <xs:element name="color" type="energyColor"/>
             </xs:sequence>
          </xs:extension>
@@ -516,6 +533,18 @@
          </xs:extension>
       </xs:complexContent>
    </xs:complexType>
+
+   <!-- Sends the specified message to the target -->
+   <xs:complexType name="message-effect">
+      <xs:complexContent>
+         <xs:extension base="target-effect">
+            <xs:sequence>
+               <xs:element name="message" type="xs:string" />
+               <xs:element name="value" type="value-FLOAT" minOccurs="0" />
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
    
    <xs:complexType name="value-vector2">
       <xs:sequence>
@@ -547,11 +576,14 @@
                      <xs:enumeration value="all" />
                      <xs:enumeration value="allies" />
                      <xs:enumeration value="target" />
+                     <xs:enumeration value="summoner" />
                   </xs:restriction>
                </xs:simpleType>
             </xs:element>
+            <xs:element name="variable" type="xs:string" />
          </xs:choice>
          <xs:element name="modifier" type="modifier" minOccurs="0" />
+         <xs:element name="limit" type="limiter" minOccurs="0" />
       </xs:sequence>
    </xs:complexType>
 
@@ -636,7 +668,7 @@
          <xs:enumeration value="int" />
          <xs:enumeration value="float" />
          <xs:enumeration value="bool" />
-         <xs:enumeration value="Player" />
+         <xs:enumeration value="character" />
          <xs:enumeration value="Projectile" />
       </xs:restriction>
    </xs:simpleType>

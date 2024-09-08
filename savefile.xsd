@@ -17,6 +17,13 @@
                   </xs:sequence>
                </xs:complexType>
             </xs:element>
+            <xs:element name="disabled-mods" minOccurs="0">
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element name="mod" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+                  </xs:sequence>
+               </xs:complexType>
+            </xs:element>
             <xs:element name="player" type="characterReferenceFFA" />
          </xs:all>
       </xs:complexType>

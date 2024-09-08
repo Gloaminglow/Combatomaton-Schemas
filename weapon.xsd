@@ -34,7 +34,7 @@
             <xs:element name="player-bound" type="xs:boolean" minOccurs="0" /> <!-- Default: false-->
             <xs:element name="strategic" type="xs:boolean" minOccurs="0" /> <!-- Default: false-->
             <xs:element name="projectile" type="weaponProjectile" />
-            <xs:element name="secondary-projectile" type="weaponProjectile" minOccurs="0" />
+            <xs:element name="secondary-projectile" type="weaponSecondaryProjectile" minOccurs="0" />
             <xs:element name="effects" type="weaponFX" />
             <xs:element name="unlock" type="xs:string" minOccurs="0" />
          </xs:all>
@@ -90,6 +90,24 @@
       <xs:all>
          <xs:element name="projectile" type="projectileType" />
          <xs:element name="effects" type="projectileEffectsReference" minOccurs="0" />
+         <xs:element name="custom-effects" type="customProjectileEffects" minOccurs="0" />
+         <xs:element name="color" type="energyColor" minOccurs="0"  />
+         <!-- -->
+         <xs:element name="speed" type="xs:float" minOccurs="0" />
+         <!-- default 0 -->
+         <xs:element name="damage" type="xs:float" />
+         <xs:element name="range" type="xs:float" />
+         <xs:element name="crit" type="fraction" minOccurs="0" />
+         <!-- default 0 -->
+      </xs:all>
+   </xs:complexType>
+
+   <!-- Secondary Projectile -->
+   <xs:complexType name="weaponSecondaryProjectile">
+      <xs:all>
+         <xs:element name="projectile" type="projectileType" minOccurs="0"/>
+         <xs:element name="effects" type="projectileEffectsReference" minOccurs="0" />
+         <xs:element name="custon-effects" type="customProjectileEffects" minOccurs="0" />
          <xs:element name="color" type="energyColor" minOccurs="0"  />
          <!-- -->
          <xs:element name="speed" type="xs:float" minOccurs="0" />

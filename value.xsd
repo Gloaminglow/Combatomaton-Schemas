@@ -65,10 +65,11 @@
          <xs:element name="constant" type="xs:float" />
           <!-- for ability gooduse -->
          <xs:element name="hostile-status" type="status" /> <!-- proportion of hostiles afflicted with that status -->
+         <xs:element name="hostile-alive" /> <!-- proportion of hostiles that are alive -->
          <xs:element name="team-resource" type="resource" /> <!-- proportion of teammates with resource -->
          <xs:element name="team-alive" /> <!-- proportion of teammates that are alive -->
          <xs:element name="team-dead" /> <!-- proportion of teammates dead. reduced by near death, increased by about to respawn. used for necromancy -->
-         <xs:element name="weapon" /> <!-- if the characters target is in range of the weapon. Specual weapon if the equipment gives one, otherwise currently held -->
+         <xs:element name="random" /> <!-- random value between 0 and 1 -->
       </xs:choice>
    </xs:group>
 
@@ -106,9 +107,9 @@
    <xs:group name="valuePlayerType">
       <xs:choice>
          <!-- base selectors -->
-         <xs:element name="player-variable" type="xs:string" />
+         <xs:element name="variable" type="xs:string" />
          <xs:element name="self" />
-         <xs:element name="none" />
+         <xs:element name="summoner" />
       </xs:choice>
    </xs:group>
    

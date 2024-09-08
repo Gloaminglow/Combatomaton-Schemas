@@ -26,6 +26,7 @@
             <xs:element name="tutorial" type="xs:boolean" minOccurs="0" /> <!-- Default: false-->
             <xs:element name="team-setup" type="teamSetup"/>
             <xs:element name="match" type="match"/>
+            <xs:element name="equipment" type="additionalEquipment" minOccurs="0" />
          </xs:all>
       </xs:complexType>
    </xs:element>
@@ -123,6 +124,12 @@
             </xs:complexType>
          </xs:element>
       </xs:all>
+   </xs:complexType>
+
+   <xs:complexType name="additionalEquipment">
+      <xs:sequence>
+         <xs:element name="trait" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
    </xs:complexType>
    
 </xs:schema>

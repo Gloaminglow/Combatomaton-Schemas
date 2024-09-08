@@ -117,7 +117,7 @@
       </xs:restriction>
    </xs:simpleType>
    
-   <!-- Temporary defninition for projectile effects. -->
+   <!-- Defninition for projectile effects. -->
    <xs:simpleType name="projectileEffectsReference">
       <xs:restriction base="xs:string">
          <xs:enumeration value="basic" />
@@ -137,6 +137,31 @@
       </xs:restriction>
    </xs:simpleType>
 
+   <!-- Definition for custom projectile effects -->
+   <xs:complexType name="customProjectileEffects">
+      <xs:sequence>
+         <xs:element name="image" minOccurs="1" maxOccurs="unbounded">
+            <xs:complexType>
+               <xs:sequence>
+                  <xs:element name="color" type="xs:boolean" minOccurs="0"/>
+                  <xs:element name="rotate" type="xs:boolean" minOccurs="0"/>
+                  <xs:element name="flip-x" type="xs:boolean" minOccurs="0"/>
+                  <xs:element name="flip-y" type="xs:boolean" minOccurs="0"/>
+                  <xs:element name="image" type="xs:string" maxOccurs="unbounded"/>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="particle" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+               <xs:all>
+                  <xs:element name="type" type="particleType"/>
+                  <xs:element name="color" type="energyColor"/>
+               </xs:all>
+            </xs:complexType>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+
    <!-- Color for projectiles and weapon FX -->
    <xs:simpleType name="energyColor">
       <xs:restriction base="xs:string">
@@ -149,6 +174,19 @@
          <xs:enumeration value="purple" />
          <xs:enumeration value="red" />
          <xs:enumeration value="none" />
+      </xs:restriction>
+   </xs:simpleType>
+
+   <xs:simpleType name="particleType">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="bubble" />
+         <xs:enumeration value="cloud" />
+         <xs:enumeration value="star" />
+         <xs:enumeration value="flame" />
+         <xs:enumeration value="sparkle" />
+         <xs:enumeration value="ammo" />
+         <xs:enumeration value="energy" />
+         <xs:enumeration value="health" />
       </xs:restriction>
    </xs:simpleType>
    
